@@ -282,7 +282,7 @@ const page: FC<PageProps> = async ({ searchParams }) => {
                         <span className="rounded-full bg-primary/5 px-2 py-1 text-primary">{article.author}</span>
                       </div>
                       <h3 className="text-lg font-vazir font-extrabold text-primary leading-snug">
-                        <Link className="text-lg font-vazir font-extrabold text-primary leading-snug" href={`/articles/${article.id}`}>
+                        <Link className="text-lg font-vazir font-extrabold text-primary leading-snug" href={`/article/${article.id}`}>
                           {article.title}
                         </Link>
                       </h3>
