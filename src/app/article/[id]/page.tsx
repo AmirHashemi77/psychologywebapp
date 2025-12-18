@@ -2,6 +2,9 @@ import { FC } from "react";
 import Image from "next/image";
 import { toPersianNumber } from "@/utils/ToPersionDigits";
 import { Metadata, ResolvingMetadata } from "next";
+import JsonLd from "@/component/seo/JsonLd";
+import { organizationId, organizationSchema, personSchema, websiteSchema, webPageSchema } from "@/lib/seo/schema";
+import { toAbsoluteUrl } from "@/lib/siteUrl";
 
 // نوع داده مقاله - می‌توانید این را در یک فایل types جداگانه قرار دهید
 interface Article {
@@ -23,7 +26,7 @@ const sampleArticle: Article = {
   author: "دکتر  مرضیه خمسه",
   publishDate: "1403/09/17",
   tags: ["روانشناسی", "استرس", "سلامت روان", "مدیریت استرس"],
-  imageUrl: "/images/article-sample.jpg",
+  imageUrl: "/images/article-sample.png",
   content: `
     
     <div style={{ lineHeight: "1.8", direction: "rtl", textAlign: "right", fontFamily: "sans-serif" }}>
@@ -128,6 +131,34 @@ const ArticleDetails: FC<ArticleDetailsProps> = ({ params }) => {
 
   return (
     <div className="min-h-screen bg-background py-32 px-4 sm:px-6 lg:px-8">
+      <JsonLd
+        idPrefix="article"
+        data={[
+          organizationSchema(),
+          personSchema(),
+          websiteSchema(),
+          webPageSchema({
+            path: `/article/${params.id}`,
+            type: "Article",
+            name: article.title,
+            description: article.summary,
+          }),
+          {
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "@id": `${toAbsoluteUrl(`/article/${params.id}`)}#blogposting`,
+            url: toAbsoluteUrl(`/article/${params.id}`),
+            headline: article.title,
+            description: article.summary,
+            image: [toAbsoluteUrl(article.imageUrl)],
+            inLanguage: "fa-IR",
+            keywords: article.tags.join(", "),
+            author: { "@id": `${toAbsoluteUrl("/")}#person` },
+            publisher: { "@id": organizationId() },
+            mainEntityOfPage: { "@type": "WebPage", "@id": `${toAbsoluteUrl(`/article/${params.id}`)}#webpage` },
+          },
+        ]}
+      />
       <article className="max-w-5xl mx-auto">
         <header className="mb-8">
           <div className="relative mb-8">

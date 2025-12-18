@@ -1,4 +1,6 @@
 import { FC } from "react";
+import JsonLd from "@/component/seo/JsonLd";
+import { organizationSchema, personSchema, websiteSchema, webPageSchema } from "@/lib/seo/schema";
 
 const serviceItems = [
   "روان‌درمانگر تحلیلی",
@@ -43,6 +45,20 @@ const memberships = ["عضو انجمن روان‌شناسی آمریکا (APA)
 const ServicesPage: FC = () => {
   return (
     <div className="max-w-5xl mx-auto px-5 pt-32 pb-16">
+      <JsonLd
+        idPrefix="services"
+        data={[
+          organizationSchema(),
+          personSchema(),
+          websiteSchema(),
+          webPageSchema({
+            path: "/services",
+            name: "خدمات | دکتر مرضیه خمسه",
+            description:
+              "خدمات روان‌درمانی و مشاوره فردی، زوج‌درمانی، طرحواره‌درمانی، مشاوره آنلاین و تلفنی زیر نظر دکتر مرضیه خمسه.",
+          }),
+        ]}
+      />
       <section className="bg-white/70 border border-primary/10 rounded-2xl p-8 shadow-sm">
         <p className="text-secondary font-vazir font-bold text-lg mb-3">خدمات</p>
         <h1 className="text-foreground font-vazir font-bold text-3xl mb-4">دکتر مرضیه خمسه</h1>

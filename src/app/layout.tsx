@@ -4,9 +4,10 @@ import "./globals.css";
 import Header from "@/component/common/layout/header/Header";
 import Footer from "@/component/common/layout/footer/Footer";
 import ClientWrapper from "@/component/ClientWrapper";
+import { getSiteUrl } from "@/lib/siteUrl";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.example.com"),
+  metadataBase: new URL(getSiteUrl()),
 
   // 2. تنظیم Title با قابلیت Template
   title: {
@@ -68,7 +69,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" dir="rtl">
+    <html lang="fa" dir="rtl">
       <body>
         <Header />
         <ClientWrapper>{children}</ClientWrapper>

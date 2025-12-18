@@ -1,6 +1,8 @@
 import { Metadata } from "next";
 import Image from "next/image";
 import { FC, FormEvent } from "react";
+import JsonLd from "@/component/seo/JsonLd";
+import { organizationSchema, websiteSchema, webPageSchema } from "@/lib/seo/schema";
 
 export const metadata: Metadata = {
   title: "تماس با ما",
@@ -17,6 +19,19 @@ const ContactUsPage: FC = () => {
 
   return (
     <div className="w-full relative overflow-hidden">
+      <JsonLd
+        idPrefix="contactus"
+        data={[
+          organizationSchema(),
+          websiteSchema(),
+          webPageSchema({
+            path: "/contactus",
+            type: "ContactPage",
+            name: "تماس با ما | دکتر مرضیه خمسه",
+            description: "برای رزرو وقت مشاوره، پرسش درباره خدمات یا هماهنگی جلسات آنلاین و حضوری، از راه‌های ارتباطی این صفحه استفاده کنید.",
+          }),
+        ]}
+      />
       <Image src="/images/conectUs.png" width={500} height={400} alt="phone" className="hidden xl:block absolute -right-24 top-42 -z-10 opacity-50 " />
       <div className="max-w-5xl w-full mx-auto px-5 pt-32 lg:pt-32 ">
         <div className="text-center space-y-10 mb-10">

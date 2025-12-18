@@ -1,18 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { articles } from "@/data/articles";
-
-const getSiteUrl = (): string => {
-  const fromEnv =
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    process.env.SITE_URL ||
-    process.env.URL ||
-    process.env.DEPLOY_PRIME_URL;
-
-  return (fromEnv ?? "http://localhost:3000").replace(/\/$/, "");
-};
-
-const toAbsoluteUrl = (path: string): string => new URL(path, getSiteUrl()).toString();
+import { toAbsoluteUrl } from "@/lib/siteUrl";
 
 export const revalidate = 60 * 60 * 24; // 1 day
 
@@ -34,4 +23,3 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();
   return [...staticRoutes, ...articleRoutes].map((item) => ({ ...item, lastModified }));
 }
-

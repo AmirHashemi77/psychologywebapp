@@ -4,6 +4,9 @@ import { FiCalendar, FiFilter } from "react-icons/fi";
 
 import { toPersianNumber } from "@/utils/ToPersionDigits";
 import { articles } from "@/data/articles";
+import JsonLd from "@/component/seo/JsonLd";
+import { organizationSchema, websiteSchema, webPageSchema } from "@/lib/seo/schema";
+import { toAbsoluteUrl } from "@/lib/siteUrl";
 import FilterTags from "../../component/modules/articles/FilterTags";
 import Pagination from "../../component/modules/articles/Pagination";
 import { FC } from "react";
@@ -117,6 +120,30 @@ const page: FC<PageProps> = async ({ searchParams }) => {
 
   return (
     <section className="min-h-screen bg-background pb-16">
+      <JsonLd
+        idPrefix="articles"
+        data={[
+          organizationSchema(),
+          websiteSchema(),
+          webPageSchema({
+            path: "/articles",
+            type: "CollectionPage",
+            name: "مقالات روانشناسی | دکتر مرضیه خمسه",
+            description: "آرشیو مقالات روانشناسی و سلامت روان؛ آموزش مهارت‌های روانی برای زندگی بهتر.",
+          }),
+          {
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            "@id": `${toAbsoluteUrl("/articles")}#itemlist`,
+            itemListElement: articles.map((article, index) => ({
+              "@type": "ListItem",
+              position: index + 1,
+              url: toAbsoluteUrl(`/article/${article.id}`),
+              name: article.title,
+            })),
+          },
+        ]}
+      />
       <Image src="/images/article.png" alt="article-vector" className="hidden xl:block absolute top-2/3 right-0 z-0" width={500} height={200} />
       <div className="relative isolate overflow-hidden bg-gradient-to-l from-primary/10 via-background to-secondary/10">
         <div className="absolute -left-10 top-6 h-40 w-40 rounded-full bg-secondary/30 blur-3xl" />
