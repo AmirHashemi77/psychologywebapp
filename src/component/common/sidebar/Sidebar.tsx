@@ -8,6 +8,7 @@ import SideBarItem from "./SliderBarItem";
 import { FaUserDoctor } from "react-icons/fa6";
 import { TbFileCv } from "react-icons/tb";
 import HeaderLogo from "../layout/header/HeaderLogo";
+import { IoEarth } from "react-icons/io5";
 
 interface Iprops {
   isSidebarOpen: boolean;
@@ -51,9 +52,9 @@ const Sidebar: FC<Iprops> = ({ isSidebarOpen, setSidebarOpen }) => {
       dropdownItems: [],
     },
     {
-      href: "#",
-      icon: <IoIosHelpCircle className="text-primary-foreground" />,
-      title: "کارگاه ها",
+      href: "/international-treatment",
+      icon: <IoEarth className="text-primary-foreground" />,
+      title: "مشاوره خارج کشور",
       dropdownItems: [],
     },
     {

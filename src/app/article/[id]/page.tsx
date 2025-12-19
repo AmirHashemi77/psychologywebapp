@@ -1,4 +1,3 @@
-import { FC } from "react";
 import Image from "next/image";
 import { toPersianNumber } from "@/utils/ToPersionDigits";
 import { Metadata, ResolvingMetadata } from "next";
@@ -88,24 +87,17 @@ const sampleArticle: Article = {
   `,
 };
 
-interface ArticleDetailsProps {
-  params: {
-    id: string;
-  };
-}
-
-type Props = {
-  params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+type ArticlePageProps = {
+  params: Promise<{ id: string }>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
 // تابع تولید متادیتای داینامیک
-export async function generateMetadata({ params }: Props, parent: ResolvingMetadata): Promise<Metadata> {
-  // 1. خواندن پارامتر
-  const slug = params.slug;
+export async function generateMetadata({ params }: ArticlePageProps, parent: ResolvingMetadata): Promise<Metadata> {
+  const { id } = await params;
 
   // 2. فچ کردن داده (Next.js درخواست‌های تکراری را De-duplicate می‌کند)
-  // const product = await fetch(`https://api.example.com/products/${slug}`).then((res) => res.json());
+  // const product = await fetch(`https://api.example.com/products/${id}`).then((res) => res.json());
   const article = sampleArticle;
   // 3. دسترسی به تصاویر والد (اختیاری)
   // const previousImages = (await parent).openGraph?.images || [];
@@ -117,14 +109,15 @@ export async function generateMetadata({ params }: Props, parent: ResolvingMetad
       images: [article.imageUrl],
     },
     alternates: {
-      canonical: `/article/${slug}`,
+      canonical: `/article/${id}`,
     },
   };
 }
 
-const ArticleDetails: FC<ArticleDetailsProps> = ({ params }) => {
+const ArticleDetails = async ({ params }: ArticlePageProps) => {
+  const { id } = await params;
   // در اینجا باید داده‌های واقعی مقاله را از API یا دیتابیس دریافت کنید
-  // برای مثال: const article = await fetchArticle(params.id);
+  // برای مثال: const article = await fetchArticle(id);
   const article = sampleArticle;
 
   // استفاده از params.id برای دریافت مقاله مورد نظر
@@ -138,7 +131,7 @@ const ArticleDetails: FC<ArticleDetailsProps> = ({ params }) => {
           personSchema(),
           websiteSchema(),
           webPageSchema({
-            path: `/article/${params.id}`,
+            path: `/article/${id}`,
             type: "Article",
             name: article.title,
             description: article.summary,
@@ -146,8 +139,8 @@ const ArticleDetails: FC<ArticleDetailsProps> = ({ params }) => {
           {
             "@context": "https://schema.org",
             "@type": "BlogPosting",
-            "@id": `${toAbsoluteUrl(`/article/${params.id}`)}#blogposting`,
-            url: toAbsoluteUrl(`/article/${params.id}`),
+            "@id": `${toAbsoluteUrl(`/article/${id}`)}#blogposting`,
+            url: toAbsoluteUrl(`/article/${id}`),
             headline: article.title,
             description: article.summary,
             image: [toAbsoluteUrl(article.imageUrl)],
@@ -155,7 +148,7 @@ const ArticleDetails: FC<ArticleDetailsProps> = ({ params }) => {
             keywords: article.tags.join(", "),
             author: { "@id": `${toAbsoluteUrl("/")}#person` },
             publisher: { "@id": organizationId() },
-            mainEntityOfPage: { "@type": "WebPage", "@id": `${toAbsoluteUrl(`/article/${params.id}`)}#webpage` },
+            mainEntityOfPage: { "@type": "WebPage", "@id": `${toAbsoluteUrl(`/article/${id}`)}#webpage` },
           },
         ]}
       />

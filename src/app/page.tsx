@@ -4,6 +4,43 @@ import HeroSection from "@/component/modules/home-temp/HeroSection";
 import Services from "@/component/modules/home-temp/ServicesSection/Services";
 import JsonLd from "@/component/seo/JsonLd";
 import { organizationSchema, websiteSchema, webPageSchema } from "@/lib/seo/schema";
+import type { Metadata } from "next";
+
+const title = "صفحه اصلی";
+const description = "مرکز روانشناسی دکتر مرضیه خمسه ارائه‌دهنده خدمات مشاوره فردی، زوج‌درمانی و خانواده‌درمانی با رویکرد علمی. رزرو نوبت آنلاین.";
+
+export const metadata: Metadata = {
+  title,
+  description,
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title,
+    description,
+    type: "website",
+    url: "/",
+    images: [
+      {
+        url: "/images/whiteLogo.svg",
+        width: 1200,
+        height: 630,
+        alt: "مرکز روانشناسی دکتر مرضیه خمسه",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: ["/images/whiteLogo.svg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  keywords: ["روانشناسی", "روان‌درمانی", "زوج‌درمانی", "طرحواره‌درمانی", "مشاوره آنلاین", "سلامت روان", "دکتر مرضیه خمسه"],
+};
 
 export default function Home() {
   return (
@@ -16,7 +53,7 @@ export default function Home() {
           webPageSchema({
             path: "/",
             name: "صفحه اصلی | مرکز روانشناسی دکتر مرضیه خمسه",
-            description: "مرکز روانشناسی دکتر مرضیه خمسه ارائه‌دهنده خدمات مشاوره فردی، زوج‌درمانی و خانواده‌درمانی با رویکرد علمی. رزرو نوبت آنلاین.",
+            description,
           }),
         ]}
       />

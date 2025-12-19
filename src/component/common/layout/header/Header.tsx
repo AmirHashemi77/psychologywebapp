@@ -20,8 +20,8 @@ const navBarArr = [
     url: "/services",
   },
   {
-    title: "کارگاه ها",
-    url: "#1",
+    title: "مشاوره خارج کشور",
+    url: "/international-treatment",
   },
   {
     title: "همکاران",

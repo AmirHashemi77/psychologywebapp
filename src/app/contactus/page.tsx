@@ -44,15 +44,15 @@ const ContactUsPage: FC = () => {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { title: "شماره تماس", value: "۰۹۳۰-۴۳۹-۰۱۱۷", note: "پاسخ‌گویی همه روزه ۹ تا ۱۹" },
+            { title: "شماره تماس", value: "۰۹۳۰-۴۳۹-۰۱۱۷", note: "پاسخ گویی شنبه تا چهارشنبه ۹ تا ۱۴ و ۱۸:۳۰ تا ۲۰" },
             { title: "تلگرام", value: "۰۹۳۰-۴۳۹-۰۱۱۷", note: "برای هماهنگی جلسات آنلاین" },
             { title: "ایمیل", value: "info@drkhamseh.com", note: "ارسال پرسش‌ها و مدارک" },
-            { title: "آدرس مطب", value: "سعادت آباد ، میدان کتاب ، انتهای بلوار کوهستان", note: "امکان رزرو حضور در مطب" },
+            { title: "آدرس مطب", value: "سعادت آباد ، میدان کتاب ، انتهای بلوار کوهستان", note: "امکان رزرو حضور در مطب (لطفا بدون هماهنگی قبلی به مطب مراجعه نفرمایید)" },
           ].map((item) => (
             <div key={item.title} className="rounded-xl border border-primary/15 bg-gradient-to-b   from-primary/80  to-primary/85 backdrop-blur px-4 py-5 shadow-sm">
               <p className="text-primary-foreground font-vazir font-semibold text-md mb-1">{item.title}</p>
               <p className="text-primary-foreground font-vazir font-bold text-lg mb-1">{item.value}</p>
-              <p className="text-primary-foreground/70 font-vazir text-sm">{item.note}</p>
+              <p className="text-primary-foreground/70 font-vazir text-sm leading-7">{item.note}</p>
             </div>
           ))}
         </div>
@@ -125,15 +125,17 @@ const ContactUsPage: FC = () => {
             <div className="w-full rounded-2xl border border-primary/15 bg-white/70 backdrop-blur p-6 shadow-sm">
               <h3 className="text-foreground font-vazir font-bold text-xl mb-3">ساعات پاسخ‌گویی</h3>
               <ul className="space-y-3 text-foreground/80 font-vazir">
-                <li className="font-vazir">شنبه تا چهارشنبه: ۹ صبح تا ۱۹</li>
-                <li className="font-vazir">پنجشنبه: ۹ صبح تا ۱۵</li>
-                <li className="font-vazir">تعطیلات رسمی: فقط مشاوره آنلاین</li>
+                <li className="font-vazir">شنبه تا چهار شنبه</li>
+                <li className="font-vazir">صبح: ۹ صبح تا ۱۴</li>
+                <li className="font-vazir"> بعد از ظهر : ۱۸:۳۰ صبح تا ۲۰</li>
               </ul>
             </div>
 
             <div className="rounded-2xl border border-primary/15 bg-white/70 p-6 shadow-sm flex-1 h-full">
               <h3 className="text-foreground font-vazir font-bold text-xl mb-3">راهنمای حضور در مطب</h3>
-              <p className="text-foreground/80 font-vazir leading-10 mb-3">پس از رزرو، موقعیت دقیق مطب و زمان دقیق نوبت برای شما ارسال می‌شود. لطفاً ۱۰ دقیقه زودتر در محل حضور داشته باشید.</p>
+              <p className="text-foreground/80 font-vazir leading-10 mb-3">
+                پس از رزرو، موقعیت دقیق مطب و زمان دقیق نوبت از طریق تلگرام برای شما ارسال می‌شود. لطفاً ۱۰ دقیقه زودتر در محل حضور داشته باشید.
+              </p>
               <div className="rounded-lg border border-primary/10 bg-white/70 px-4 py-3 text-foreground/70 font-vazir text-sm">
                 پارکینگ عمومی در ابتدای خیابان قرار دارد و دسترسی به مترو و BRT کمتر از ۵ دقیقه پیاده است.
               </div>

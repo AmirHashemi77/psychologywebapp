@@ -1,6 +1,43 @@
 import { FC } from "react";
 import JsonLd from "@/component/seo/JsonLd";
 import { organizationSchema, personSchema, websiteSchema, webPageSchema } from "@/lib/seo/schema";
+import type { Metadata } from "next";
+
+const title = "خدمات";
+const description = "خدمات روان‌درمانی و مشاوره فردی، زوج‌درمانی، طرحواره‌درمانی، مشاوره آنلاین و تلفنی زیر نظر دکتر مرضیه خمسه.";
+
+export const metadata: Metadata = {
+  title,
+  description,
+  alternates: {
+    canonical: "/services",
+  },
+  openGraph: {
+    title,
+    description,
+    type: "website",
+    url: "/services",
+    images: [
+      {
+        url: "/images/whiteLogo.svg",
+        width: 1200,
+        height: 630,
+        alt: "خدمات روانشناسی دکتر مرضیه خمسه",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: ["/images/whiteLogo.svg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  keywords: ["خدمات روانشناسی", "روان‌درمانی", "طرحواره‌درمانی", "زوج‌درمانی", "مشاوره آنلاین", "مشاوره تلفنی", "دکتر مرضیه خمسه"],
+};
 
 const serviceItems = [
   "روان‌درمانگر تحلیلی",
@@ -54,8 +91,7 @@ const ServicesPage: FC = () => {
           webPageSchema({
             path: "/services",
             name: "خدمات | دکتر مرضیه خمسه",
-            description:
-              "خدمات روان‌درمانی و مشاوره فردی، زوج‌درمانی، طرحواره‌درمانی، مشاوره آنلاین و تلفنی زیر نظر دکتر مرضیه خمسه.",
+            description,
           }),
         ]}
       />
