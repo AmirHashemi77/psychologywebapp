@@ -49,13 +49,13 @@ const Footer: FC = () => {
             <div className="flex flex-col items-start gap-5">
               <p className="text-primary-foreground text-xl font-semibold font-vazir">ما را دنبال کنید :</p>
               <div className="flex items-center gap-5">
-                <Link href="">
+                <Link href="#">
                   <FaFacebook className="text-3xl  text-secondary hover:text-primary-foreground transition-all duration-200" />
                 </Link>
-                <Link href="">
+                <Link href="https://www.instagram.com/khamseh_1216">
                   <FaInstagram className="text-3xl  text-secondary hover:text-primary-foreground transition-all duration-200" />
                 </Link>
-                <Link href="">
+                <Link href="#">
                   <FaWhatsapp className="text-3xl  text-secondary hover:text-primary-foreground transition-all duration-200" />
                 </Link>
                 <Link href="https://t.me/R0ADMIN">
