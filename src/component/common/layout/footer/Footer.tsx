@@ -8,7 +8,7 @@ import Image from "next/image";
 
 const Footer: FC = () => {
   return (
-    <footer className="w-full bg-gradient-to-b from-primary to-[#424f2e] p-5 mt-10 relative ">
+    <footer className="w-full bg-gradient-to-b from-primary to-[#879476] p-5 mt-10 relative ">
       <Image src="/images/footer-bg.png" fill alt="bg-footer" className=" opacity-10 " />
       <div className="w-full max-w-6xl mx-auto relative inset-0 z-10">
         <div className="flex flex-col gap-28 md:gap-10 md:flex-row w-full items-center justify-between flex-wrap">

@@ -26,7 +26,8 @@ body {
   --color-background: #fefbf2;
   --color-foreground: #4a4a4a;
 
-  --color-primary: #485733;
+  --color-primary: #abc4a1;
+  /* --color-primary: #485733; */
   --color-primary-foreground: #ffffff;
 
   --color-secondary: #e9b643;
