@@ -6,7 +6,7 @@ import JsonLd from "@/component/seo/JsonLd";
 import { organizationSchema, websiteSchema, webPageSchema } from "@/lib/seo/schema";
 import type { Metadata } from "next";
 
-const title = "مـــرکز روانـــشنــاسی و روان تحلیلی دکتر مــــرضیه خـــمســه";
+const title = "مرکز روانشناسی و روان تحلیلی دکتر مرضیه خمسه";
 const description = "مرکز روانشناسی دکتر مرضیه خمسه ارائه‌دهنده خدمات مشاوره فردی، زوج‌درمانی و خانواده‌درمانی با رویکرد علمی. رزرو نوبت آنلاین.";
 
 export const metadata: Metadata = {
