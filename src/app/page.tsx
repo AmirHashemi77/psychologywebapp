@@ -6,8 +6,9 @@ import JsonLd from "@/component/seo/JsonLd";
 import { organizationSchema, websiteSchema, webPageSchema } from "@/lib/seo/schema";
 import type { Metadata } from "next";
 
-const title = "مرکز روانشناسی و روان تحلیلی دکتر مرضیه خمسه";
-const description = "مرکز روانشناسی دکتر مرضیه خمسه ارائه‌دهنده خدمات مشاوره فردی، زوج‌درمانی و خانواده‌درمانی با رویکرد علمی. رزرو نوبت آنلاین.";
+const focusKeyword = "بهترین کلینیک روانشناسی تهران";
+const title = `مرکز روانشناسی و روان تحلیلی دکتر مرضیه خمسه | ${focusKeyword}`;
+const description = `${focusKeyword}؛ مرکز روانشناسی دکتر مرضیه خمسه ارائه‌دهنده خدمات مشاوره فردی، زوج‌درمانی و خانواده‌درمانی با رویکرد علمی. رزرو نوبت آنلاین.`;
 
 export const metadata: Metadata = {
   title,
@@ -39,7 +40,17 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
-  keywords: ["روانشناسی", "روان‌درمانی", "زوج‌درمانی", "طرحواره‌درمانی", "مشاوره آنلاین", "سلامت روان", "دکتر مرضیه خمسه"],
+  keywords: [
+    focusKeyword,
+    "بهترین کلینینک روانشناسی تهران",
+    "روانشناسی",
+    "روان‌درمانی",
+    "زوج‌درمانی",
+    "طرحواره‌درمانی",
+    "مشاوره آنلاین",
+    "سلامت روان",
+    "دکتر مرضیه خمسه",
+  ],
 };
 
 export default function Home() {
@@ -52,7 +63,7 @@ export default function Home() {
           websiteSchema(),
           webPageSchema({
             path: "/",
-            name: "صفحه اصلی | مرکز روانشناسی دکتر مرضیه خمسه",
+            name: `صفحه اصلی | ${focusKeyword} | مرکز روانشناسی دکتر مرضیه خمسه`,
             description,
           }),
         ]}
