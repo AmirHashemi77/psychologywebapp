@@ -3,7 +3,6 @@ import Link from "next/link";
 import { FiCalendar, FiFilter } from "react-icons/fi";
 
 import { toPersianNumber } from "@/utils/ToPersionDigits";
-import { articles } from "@/data/articles";
 import JsonLd from "@/component/seo/JsonLd";
 import { organizationSchema, websiteSchema, webPageSchema } from "@/lib/seo/schema";
 import { toAbsoluteUrl } from "@/lib/siteUrl";
@@ -11,6 +10,9 @@ import FilterTags from "../../component/modules/articles/FilterTags";
 import Pagination from "../../component/modules/articles/Pagination";
 import { FC } from "react";
 import { Metadata } from "next";
+import type { ArticleSummary } from "@/data/articles";
+import { getArticlesServices } from "@/services/article.services";
+import { getTagsServices } from "@/services/tag.services";
 
 const pageSize = 6;
 
@@ -34,6 +36,75 @@ const normalizeTags = (value?: string | string[]): string[] => {
 const parsePageNumber = (value?: string): number => {
   const parsed = Number(value);
   return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : 1;
+};
+
+const coerceArticle = (value: unknown): ArticleSummary | null => {
+  if (!value || typeof value !== "object") return null;
+  const record = value as Record<string, unknown>;
+
+  const id = typeof record.id === "string" ? record.id : typeof record.slug === "string" ? record.slug : null;
+  if (!id) return null;
+
+  const title = typeof record.title === "string" ? record.title : "";
+  const subtitle = typeof record.subtitle === "string" ? record.subtitle : typeof record.summary === "string" ? record.summary : "";
+  const author = typeof record.author === "string" ? record.author : "";
+  const createdAt = typeof record.publishDate === "string" ? record.publishDate : typeof record.publishedAt === "string" ? record.publishedAt : "";
+  const tags = Array.isArray(record.tags) ? (record.tags.filter((t) => typeof t === "string") as string[]) : [];
+  const imageUrl = typeof record.imageUrl === "string" ? record.imageUrl : typeof record.image === "string" ? record.image : "/images/article-sample.png";
+
+  return { id, title, subtitle, author, createdAt, tags, imageUrl };
+};
+
+const normalizeArticlesResponse = (
+  response: unknown
+): {
+  items: ArticleSummary[];
+  total?: number;
+  totalPages?: number;
+} => {
+  const toItems = (values: unknown) => (Array.isArray(values) ? values.map(coerceArticle).filter(Boolean) : []) as ArticleSummary[];
+
+  if (Array.isArray(response)) {
+    return { items: toItems(response) };
+  }
+
+  if (response && typeof response === "object") {
+    const record = response as Record<string, unknown>;
+    const items = toItems(record.items ?? record.data ?? record.articles ?? record.results);
+
+    const total = typeof record.total === "number" ? record.total : typeof record.count === "number" ? record.count : undefined;
+    const totalPages = typeof record.totalPages === "number" ? record.totalPages : typeof record.pages === "number" ? record.pages : undefined;
+
+    return { items, total, totalPages };
+  }
+
+  return { items: [] };
+};
+
+const normalizeTagsResponse = (response: unknown): string[] => {
+  const coerceTag = (value: unknown): string | null => {
+    if (typeof value === "string") return value.trim() || null;
+    if (!value || typeof value !== "object") return null;
+    const record = value as Record<string, unknown>;
+    const tag =
+      typeof record.name === "string"
+        ? record.name
+        : typeof record.title === "string"
+          ? record.title
+          : typeof record.slug === "string"
+            ? record.slug
+            : null;
+    return tag?.trim() || null;
+  };
+
+  const toTags = (value: unknown) => (Array.isArray(value) ? (value.map(coerceTag).filter(Boolean) as string[]) : []);
+
+  if (Array.isArray(response)) return toTags(response);
+  if (response && typeof response === "object") {
+    const record = response as Record<string, unknown>;
+    return toTags(record.tags ?? record.data ?? record.items ?? record.results);
+  }
+  return [];
 };
 
 export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
@@ -110,13 +181,26 @@ const page: FC<PageProps> = async ({ searchParams }) => {
   const resolvingSearchParams = await searchParams;
   const activeTags = normalizeTags(resolvingSearchParams?.tag);
 
-  const totalArticles = articles.length;
-  const totalPages = Math.max(1, Math.ceil(totalArticles / pageSize));
-  const currentPage = Math.min(parsePageNumber(resolvingSearchParams?.page as string), totalPages);
-  const visibleArticles = articles.slice(0, pageSize);
-  const displayStart = totalArticles ? 1 : 0;
-  const displayEnd = Math.min(pageSize, totalArticles);
-  const tagList = Array.from(new Set(articles.flatMap((item) => item.tags)));
+  const requestedPage = parsePageNumber(resolvingSearchParams?.page as string);
+  const tagParam = activeTags.length ? activeTags.join(",") : undefined;
+
+  const [articlesResponse, tagsResponse] = await Promise.all([getArticlesServices(requestedPage, pageSize, tagParam), getTagsServices().catch(() => undefined)]);
+
+  const { items: fetchedArticles, total, totalPages: apiTotalPages } = normalizeArticlesResponse(articlesResponse);
+  const visibleArticles = fetchedArticles;
+
+  const totalArticles = total ?? (requestedPage - 1) * pageSize + visibleArticles.length;
+  const totalPages = apiTotalPages ?? (typeof total === "number" ? Math.max(1, Math.ceil(total / pageSize)) : 1);
+  const currentPage = Math.min(requestedPage, totalPages);
+
+  const displayStart = visibleArticles.length ? (currentPage - 1) * pageSize + 1 : 0;
+  const displayEnd = (currentPage - 1) * pageSize + visibleArticles.length;
+
+  const tagList = (() => {
+    const tagsFromApi = normalizeTagsResponse(tagsResponse);
+    const fromArticles = Array.from(new Set(fetchedArticles.flatMap((item) => item.tags ?? [])));
+    return Array.from(new Set([...tagsFromApi, ...fromArticles, ...activeTags]));
+  })();
 
   return (
     <section className="min-h-screen bg-background pb-16">
@@ -135,7 +219,7 @@ const page: FC<PageProps> = async ({ searchParams }) => {
             "@context": "https://schema.org",
             "@type": "ItemList",
             "@id": `${toAbsoluteUrl("/articles")}#itemlist`,
-            itemListElement: articles.map((article, index) => ({
+            itemListElement: visibleArticles.map((article, index) => ({
               "@type": "ListItem",
               position: index + 1,
               url: toAbsoluteUrl(`/article/${article.id}`),
@@ -156,7 +240,7 @@ const page: FC<PageProps> = async ({ searchParams }) => {
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-vazir font-black text-primary leading-tight">مقالات روانشناسی</h1>
           <p className="max-w-3xl text-foreground/80 font-vazir leading-8">لیست جدیدترین مقالات روانشناسی | یادگیری مهارت‌های روانی برای زندگی بهتر </p>
           <div className="flex flex-wrap items-center gap-4 text-sm font-vazir text-foreground/70">
-            <span className="rounded-full bg-primary/10 px-4 py-2 font-bold text-primary">مجموع: {toPersianNumber(articles.length)} مقاله</span>
+            <span className="rounded-full bg-primary/10 px-4 py-2 font-bold text-primary">مجموع: {toPersianNumber(totalArticles)} مقاله</span>
             {activeTags.length > 0 ? (
               <Link href="/articles" className="rounded-full border border-secondary/40 px-4 py-2 text-secondary transition hover:bg-secondary/10 cursor-pointer">
                 پاک کردن فیلترها
@@ -188,7 +272,12 @@ const page: FC<PageProps> = async ({ searchParams }) => {
                     className="group flex h-full flex-col overflow-hidden rounded-2xl border border-primary/10 bg-white shadow-lg shadow-primary/10 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/20"
                   >
                     <div className="relative h-48 w-full overflow-hidden">
-                      <Image src={article.imageUrl} alt={article.title} fill className="object-cover transition duration-500 group-hover:scale-105" />
+                      {article.imageUrl.startsWith("http") ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={article.imageUrl} alt={article.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy" />
+                      ) : (
+                        <Image src={article.imageUrl} alt={article.title} fill className="object-cover transition duration-500 group-hover:scale-105" />
+                      )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
                       <div className="absolute right-3 top-3 flex flex-wrap gap-2">
                         {article.tags.slice(0, 2).map((tag) => (
@@ -202,7 +291,7 @@ const page: FC<PageProps> = async ({ searchParams }) => {
                       <div className="flex items-center justify-between text-xs font-vazir text-foreground/70">
                         <div className="flex items-center gap-1">
                           <FiCalendar className="h-4 w-4" />
-                          <span>{toPersianNumber(article.publishDate)}</span>
+                          <span>{toPersianNumber(article.createdAt)}</span>
                         </div>
                         <span className="rounded-full bg-primary/5 px-2 py-1 text-primary">{article.author}</span>
                       </div>

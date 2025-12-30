@@ -1,90 +1,83 @@
 import Image from "next/image";
 import { toPersianNumber } from "@/utils/ToPersionDigits";
-import { Metadata, ResolvingMetadata } from "next";
+import { Metadata } from "next";
 import JsonLd from "@/component/seo/JsonLd";
 import { organizationId, organizationSchema, personSchema, websiteSchema, webPageSchema } from "@/lib/seo/schema";
 import { toAbsoluteUrl } from "@/lib/siteUrl";
+import { getArticleItemServices } from "@/services/article.services";
+import { notFound } from "next/navigation";
 
 // نوع داده مقاله - می‌توانید این را در یک فایل types جداگانه قرار دهید
 interface Article {
   id: string;
   title: string;
   summary: string;
-  content: string;
   author: string;
-  publishDate: string;
+  image: string;
+  status: "draft" | "published";
   tags: string[];
-  imageUrl: string;
+  value: unknown[];
+  html: string;
+  createdAt: string; // ISO Date
+  updatedAt: string; // ISO Date
 }
 
-// داده نمونه - این را با API واقعی جایگزین کنید
-const sampleArticle: Article = {
-  id: "1",
-  title: "روانشناسی رفتار انسان در موقعیت‌های استرس‌زا",
-  summary: "در این مقاله به بررسی واکنش‌های روانی و رفتاری افراد در مواجهه با موقعیت‌های استرس‌زا می‌پردازیم و راهکارهای مقابله با آن را ارائه می‌دهیم.",
-  author: "دکتر  مرضیه خمسه",
-  publishDate: "1403/09/17",
-  tags: ["روانشناسی", "استرس", "سلامت روان", "مدیریت استرس"],
-  imageUrl: "/images/article-sample.png",
-  content: `
-    
-    <div style={{ lineHeight: "1.8", direction: "rtl", textAlign: "right", fontFamily: "sans-serif" }}>
-      <h2>استرس</h2>
-      <p>
-        استرس یکی از پدیده‌های رایج در زندگی مدرن است که تقریباً همه افراد در طول
-        زندگی خود با آن مواجه می‌شوند.
-      </p>
+const coerceArticle = (value: unknown): Article | null => {
+  if (!value || typeof value !== "object") return null;
+  const record = value as Record<string, unknown>;
 
-      <h3>تعریف استرس</h3>
-      <p>
-        استرس واکنش بدن به هر تقاضا یا چالشی است که با آن مواجه می‌شود. این واکنش می‌تواند
-        فیزیکی، ذهنی یا احساسی باشد.
-      </p>
+  const id = typeof record.id === "string" ? record.id : typeof record.slug === "string" ? record.slug : null;
+  if (!id) return null;
 
-      <h3>انواع استرس</h3>
-      <ol>
-        <li>
-          <strong>استرس حاد:</strong> این نوع استرس کوتاه‌مدت است و معمولاً در پاسخ به یک
-          رویداد خاص ایجاد می‌شود.
-        </li>
-        <li>
-          <strong>استرس مزمن:</strong> این نوع استرس طولانی‌مدت است و می‌تواند اثرات جدی بر
-          سلامت جسمی و روانی داشته باشد.
-        </li>
-      </ol>
+  const title = typeof record.title === "string" ? record.title : "";
+  const summary = typeof record.summary === "string" ? record.summary : typeof record.subtitle === "string" ? record.subtitle : "";
+  const author = typeof record.author === "string" ? record.author : typeof record.authorName === "string" ? record.authorName : "";
+  const image = typeof record.image === "string" ? record.image : typeof record.imageUrl === "string" ? record.imageUrl : "/images/article-sample.png";
+  const status = record.status === "draft" || record.status === "published" ? record.status : "published";
 
-      <h3>علائم استرس</h3>
-      <ul>
-        <li>افزایش ضربان قلب</li>
-        <li>تنش عضلانی</li>
-        <li>اضطراب و نگرانی</li>
-        <li>مشکلات خواب</li>
-        <li>تغییرات اشتها</li>
-      </ul>
+  const tags = (() => {
+    if (Array.isArray(record.tags)) return record.tags.filter((t) => typeof t === "string") as string[];
+    if (typeof record.tags === "string")
+      return record.tags
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean);
+    return [];
+  })();
 
-      <h3>راهکارهای مدیریت استرس</h3>
-      <p>
-        یکی از مهم‌ترین راه‌های مقابله با استرس، شناخت منابع آن است. با شناسایی عوامل
-        استرس‌زا، می‌توانیم برنامه‌های موثرتری برای مدیریت آن طراحی کنیم.
-      </p>
+  const valueArray = Array.isArray(record.value) ? (record.value as unknown[]) : [];
 
-      <h4>تکنیک‌های مقابله</h4>
-      <ul>
-        <li><strong>تمرینات تنفسی عمیق:</strong> این تکنیک‌ها به آرام‌سازی سیستم عصبی کمک می‌کنند.</li>
-        <li><strong>ورزش منظم:</strong> فعالیت بدنی منظم می‌تواند سطح هورمون‌های استرس را کاهش دهد.</li>
-        <li><strong>مدیتیشن و یوگا:</strong> این روش‌ها به ذهن کمک می‌کنند تا آرامش یابد.</li>
-        <li><strong>حمایت اجتماعی:</strong> صحبت با دوستان و خانواده می‌تواند فشار روانی را کاهش دهد.</li>
-      </ul>
+  const html =
+    typeof record.html === "string"
+      ? record.html
+      : typeof record.content === "string"
+      ? record.content
+      : typeof record.contentHtml === "string"
+      ? record.contentHtml
+      : typeof record.body === "string"
+      ? record.body
+      : "";
 
-      <h3>نتیجه‌گیری</h3>
-      <p>
-        مدیریت استرس یک مهارت ضروری در زندگی مدرن است. با یادگیری تکنیک‌های مناسب و ایجاد
-        عادات سالم، می‌توانیم تأثیرات منفی استرس را کاهش دهیم و کیفیت زندگی خود را بهبود
-        بخشیم.
-      </p>
-    </div>
-  
-  `,
+  const createdAt =
+    typeof record.createdAt === "string" ? record.createdAt : typeof record.publishDate === "string" ? record.publishDate : typeof record.publishedAt === "string" ? record.publishedAt : "";
+
+  const updatedAt = typeof record.updatedAt === "string" ? record.updatedAt : createdAt;
+
+  return { id, title, summary, author, image, status, tags, value: valueArray, html, createdAt, updatedAt };
+};
+
+const normalizeArticleItemResponse = (response: unknown): Article | null => {
+  if (!response) return null;
+  if (response && typeof response === "object") {
+    const record = response as Record<string, unknown>;
+    return coerceArticle(record.item ?? record.data ?? record.article ?? record.result ?? record);
+  }
+  return null;
+};
+
+const fetchArticle = async (id: string): Promise<Article | null> => {
+  const response = await getArticleItemServices(id);
+  return normalizeArticleItemResponse(response);
 };
 
 type ArticlePageProps = {
@@ -93,20 +86,23 @@ type ArticlePageProps = {
 };
 
 // تابع تولید متادیتای داینامیک
-export async function generateMetadata({ params }: ArticlePageProps, parent: ResolvingMetadata): Promise<Metadata> {
+export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
   const { id } = await params;
 
-  // 2. فچ کردن داده (Next.js درخواست‌های تکراری را De-duplicate می‌کند)
-  // const product = await fetch(`https://api.example.com/products/${id}`).then((res) => res.json());
-  const article = sampleArticle;
-  // 3. دسترسی به تصاویر والد (اختیاری)
-  // const previousImages = (await parent).openGraph?.images || [];
+  const article = await fetchArticle(id);
+  if (!article) {
+    return {
+      title: "مقاله یافت نشد",
+      robots: { index: false, follow: false },
+      alternates: { canonical: `/article/${id}` },
+    };
+  }
 
   return {
     title: article.title,
     description: article.summary,
     openGraph: {
-      images: [article.imageUrl],
+      images: [toAbsoluteUrl(article.image)],
     },
     alternates: {
       canonical: `/article/${id}`,
@@ -116,11 +112,8 @@ export async function generateMetadata({ params }: ArticlePageProps, parent: Res
 
 const ArticleDetails = async ({ params }: ArticlePageProps) => {
   const { id } = await params;
-  // در اینجا باید داده‌های واقعی مقاله را از API یا دیتابیس دریافت کنید
-  // برای مثال: const article = await fetchArticle(id);
-  const article = sampleArticle;
-
-  // استفاده از params.id برای دریافت مقاله مورد نظر
+  const article = await fetchArticle(id);
+  if (!article) notFound();
 
   return (
     <div className="min-h-screen bg-background py-32 px-4 sm:px-6 lg:px-8">
@@ -143,7 +136,7 @@ const ArticleDetails = async ({ params }: ArticlePageProps) => {
             url: toAbsoluteUrl(`/article/${id}`),
             headline: article.title,
             description: article.summary,
-            image: [toAbsoluteUrl(article.imageUrl)],
+            image: [toAbsoluteUrl(article.image)],
             inLanguage: "fa-IR",
             keywords: article.tags.join(", "),
             author: { "@id": `${toAbsoluteUrl("/")}#person` },
@@ -180,7 +173,7 @@ const ArticleDetails = async ({ params }: ArticlePageProps) => {
                   />
                 </svg>
               </div>
-              <span className="font-bold text-sm md:text-base">{toPersianNumber(article.publishDate)}</span>
+              <span className="font-bold text-sm md:text-base">{toPersianNumber(new Date(article.createdAt).toLocaleDateString("fa", { dateStyle: "long" }))}</span>
             </div>
           </div>
 
@@ -212,21 +205,30 @@ const ArticleDetails = async ({ params }: ArticlePageProps) => {
 
         {/* تصویر اصلی مقاله */}
         <div className="relative w-full h-[400px] md:h-[500px] rounded-xl overflow-hidden shadow-2xl mb-12 border-4 border-secondary/20">
-          <Image src="/images/article-sample.png" alt={article.title} fill className="object-cover" priority />
+          {article.image.startsWith("http") ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={article.image} alt={article.title} className="h-full w-full object-cover" loading="eager" />
+          ) : (
+            <Image src={article.image} alt={article.title} fill className="object-cover" priority />
+          )}
         </div>
 
         {/* محتوای اصلی مقاله */}
         <div className="prose prose-lg max-w-none">
-          <div
-            dangerouslySetInnerHTML={{ __html: article.content }}
-            className="text-foreground font-vazir leading-relaxed space-y-4 whitespace-pre-line text-base md:text-lg font-medium p-5 border-2 border-foreground/50 rounded-2xl"
-          />
+          {article.html ? (
+            <div
+              dangerouslySetInnerHTML={{ __html: article.html }}
+              className="text-foreground font-vazir leading-relaxed space-y-4 whitespace-pre-line text-base md:text-lg font-medium p-5 border-2 border-foreground/50 rounded-2xl"
+            />
+          ) : (
+            <div className="text-foreground/70 font-vazir leading-relaxed text-base md:text-lg font-medium p-5 border-2 border-foreground/20 rounded-2xl">محتوایی برای این مقاله ثبت نشده است.</div>
+          )}
         </div>
 
         {/* بخش انتهایی */}
         <footer className="mt-12 pt-8 border-t border-primary/20">
           <div className="flex items-center justify-between flex-wrap gap-4 font-vazir">
-            <div className="text-sm text-foreground/60">آخرین بروزرسانی: {toPersianNumber(article.publishDate)}</div>
+            <div className="text-sm text-foreground/60">آخرین بروزرسانی: {toPersianNumber(new Date(article.updatedAt).toLocaleDateString("fa", { dateStyle: "long" }))}</div>
             <div className="flex gap-4">
               <button className="px-6 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/90 transition-colors font-medium cursor-pointer">اشتراک‌گذاری</button>
             </div>
