@@ -1,16 +1,21 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-* {
-  box-sizing: border-box;
-}
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
 
-html {
-  direction: rtl;
-}
-body {
-  background: #fefbf2;
-  /* background: url("/images/bg.png"); */
-  /* background: radial-gradient(circle, rgba(18, 11, 4, 1) 21%, rgba(27, 16, 5, 1) 75%, rgba(32, 19, 5, 1) 91%, rgba(38, 22, 6, 1) 100%); */
+  html {
+    direction: rtl;
+  }
+
+  body {
+    background: #fefbf2;
+    /* background: url("/images/bg.png"); */
+    /* background: radial-gradient(circle, rgba(18, 11, 4, 1) 21%, rgba(27, 16, 5, 1) 75%, rgba(32, 19, 5, 1) 91%, rgba(38, 22, 6, 1) 100%); */
+  }
 }
 
 .bg-hero {
@@ -21,32 +26,6 @@ body {
   background: url("/images/1.png");
   background-repeat: no-repeat;
   background-size: cover;
-}
-@theme {
-  --color-background: #fefbf2;
-  --color-foreground: #4a4a4a;
-
-  --color-primary: #abc4a1;
-  /* --color-primary: #485733; */
-  --color-primary-foreground: #ffffff;
-
-  --color-secondary: #e9b643;
-  --color-secondary-foreground: #ffffff;
-
-  /* --color-destructive: oklch(60% 0.15 25);
-  --color-destructive-foreground: oklch(95% 0 0);
-
-  --color-muted: oklch(95% 0 0);
-  --color-muted-foreground: #fbefd8ce;
-
-  --color-accent: oklch(95% 0 0);
-  --color-accent-foreground: oklch(25% 0 0);
-
-  --color-popover: 0% 0% 100%;
-  --color-popover-foreground: oklch(25% 0 0);
-
-  --color-card: #23180d;
-  --color-card-foreground: #fbefd8; */
 }
 
 @font-face {
@@ -119,12 +98,6 @@ body {
   font-weight: 900;
   font-style: normal;
   font-display: swap;
-}
-@theme {
-  --font-vazir: "Vazirmatn", system-ui, sans-serif;
-}
-
-@layer components {
 }
 .no-scrollbar::-webkit-scrollbar {
   display: none;
