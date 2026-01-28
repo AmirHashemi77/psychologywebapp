@@ -7,7 +7,8 @@ module.exports = {
         background: "#fefbf2",
         foreground: "#4a4a4a",
         primary: {
-          DEFAULT: "#abc4a1",
+          // DEFAULT: "#abc4a1",
+          DEFAULT: "#485733",
           foreground: "#ffffff",
         },
         secondary: {
@@ -18,7 +19,7 @@ module.exports = {
           foreground: "#fbefd8ce",
         },
         card: {
-          DEFAULT: "#23180d",
+          DEFAULT: "#fffff",
           foreground: "#fbefd8",
         },
       },

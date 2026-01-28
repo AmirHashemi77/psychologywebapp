@@ -28,8 +28,8 @@ const normalizeTags = (value?: string | string[]): string[] => {
       values
         .flatMap((item) => item.split(","))
         .map((item) => item.trim())
-        .filter(Boolean)
-    )
+        .filter(Boolean),
+    ),
   );
 };
 
@@ -56,7 +56,7 @@ const coerceArticle = (value: unknown): ArticleSummary | null => {
 };
 
 const normalizeArticlesResponse = (
-  response: unknown
+  response: unknown,
 ): {
   items: ArticleSummary[];
   total?: number;
@@ -86,14 +86,7 @@ const normalizeTagsResponse = (response: unknown): string[] => {
     if (typeof value === "string") return value.trim() || null;
     if (!value || typeof value !== "object") return null;
     const record = value as Record<string, unknown>;
-    const tag =
-      typeof record.name === "string"
-        ? record.name
-        : typeof record.title === "string"
-          ? record.title
-          : typeof record.slug === "string"
-            ? record.slug
-            : null;
+    const tag = typeof record.name === "string" ? record.name : typeof record.title === "string" ? record.title : typeof record.slug === "string" ? record.slug : null;
     return tag?.trim() || null;
   };
 
@@ -230,8 +223,6 @@ const page: FC<PageProps> = async ({ searchParams }) => {
       />
       <Image src="/images/article.png" alt="article-vector" className="hidden xl:block absolute top-2/3 right-0 z-0" width={500} height={200} />
       <div className="relative isolate overflow-hidden bg-gradient-to-l from-primary/10 via-background to-secondary/10">
-        <div className="absolute -left-10 top-6 h-40 w-40 rounded-full bg-secondary/30 blur-3xl" />
-        <div className="absolute -right-14 bottom-6 h-48 w-48 rounded-full bg-primary/25 blur-3xl" />
         <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 pb-16 pt-24 text-right">
           <div className="flex items-center gap-3 text-secondary font-vazir text-sm md:text-base">
             <FiFilter className="h-5 w-5" />

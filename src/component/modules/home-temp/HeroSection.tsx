@@ -8,7 +8,7 @@ const HeroSection: FC = () => {
       <div className="absolute top-0 right-0 h-screen w-full bg-black/50 lg:hidden" />
       <div className="absolute left-1/2  lg:left-[16.6667%] top-[14%] -translate-x-1/2 lg:translate-x-0 ">
         <div className="flex flex-col items-start gap-6 ">
-          <h1 className="text-primary-foreground whitespace-nowrap text-3xl md:text-4xl lg:text-5xl 2xl:text-6xl font-bold  font-vazir leading-14 lg:leading-24">
+          <h1 className="text-primary-foreground whitespace-nowrap text-3xl md:text-4xl lg:text-5xl 2xl:text-6xl font-bold  font-vazir !leading-14 lg:!leading-24">
             مـــرکز روانـــشنــاسی <br className="md:hidden" /> و روان تحلیلی <br /> دکتر مــــرضیه خـــمســه
           </h1>
           <div className="flex items-center gap-4 px-3">
@@ -26,4 +26,3 @@ const HeroSection: FC = () => {
   );
 };
 export default HeroSection;
-
