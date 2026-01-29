@@ -118,11 +118,11 @@
   @apply text-primary-foreground text-center lg:text-right text-xl md:text-2xl lg:text-3xl font-vazir font-semibold my-5;
 }
 .blog-content p {
-  @apply text-sm text-primary-foreground font-vazir w-full  leading-10 text-center lg:text-right;
+  @apply text-sm text-primary-foreground font-vazir w-full  !leading-10 text-center lg:text-right;
 }
 .blog-content ul li {
-  @apply text-sm text-primary-foreground font-vazir w-full  leading-10 text-center lg:text-right px-3;
+  @apply text-sm text-primary-foreground font-vazir w-full  !leading-10 text-center lg:text-right px-3;
 }
 .blog-content p {
-  @apply text-sm text-primary-foreground font-vazir w-full  leading-10 text-center lg:text-right;
+  @apply text-sm text-primary-foreground font-vazir w-full  !leading-10 text-center lg:text-right;
 }

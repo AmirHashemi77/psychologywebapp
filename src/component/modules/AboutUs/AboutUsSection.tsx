@@ -28,7 +28,7 @@ const AboutUsSection: FC<Iprops> = ({ hasBrain = true }) => {
           <div className="space-y-6">
             <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl p-6 shadow-sm">
               <h4 className="text-foreground font-bold font-vazir text-xl mb-4">معرفی</h4>
-              <p className="text-foreground/80 font-vazir leading-relaxed text-justify">
+              <p className="text-foreground/80 font-vazir !leading-relaxed text-justify">
                 دکتر مرضیه خمسه یک روان‌درمانگر و روان‌شناس ایرانی و عضو انجمن روانشناسی امریکا (APA) است. ایشان با بیش از ۱۷ سال تجربه در مشاوره و جلسات روان‌تحلیلی، خدمات تخصصی خود را به صورت حضوری
                 و غیرحضوری (آنلاین) به ایرانیان داخل و خارج از کشور ارائه می‌نماید.
               </p>
@@ -163,7 +163,7 @@ const AboutUsSection: FC<Iprops> = ({ hasBrain = true }) => {
               "دوره تشخیص و درمان اختلالات یادگیری در دانشگاه الزهراء",
             ].map((course, index) => (
               <div key={index} className="bg-white/50 dark:bg-foreground/5 rounded-lg p-3 text-center border border-primary/10 cursor-pointer">
-                <p className="text-foreground/80 font-vazir text-xs leading-relaxed">{course}</p>
+                <p className="text-foreground/80 font-vazir text-xs !leading-relaxed">{course}</p>
               </div>
             ))}
           </div>
@@ -172,7 +172,7 @@ const AboutUsSection: FC<Iprops> = ({ hasBrain = true }) => {
         {/* خدمات آنلاین */}
         <div className="mt-12 bg-gradient-to-r from-primary/10 via-primary/10 to-primary/10 rounded-2xl p-8 text-center">
           <h4 className="text-foreground font-bold font-vazir text-2xl mb-4">خدمات آنلاین و غیرحضوری</h4>
-          <p className="text-foreground/80 font-vazir text-lg leading-relaxed max-w-3xl mx-auto">ارائه خدمات تخصصی روانشناسی به ایرانیان خارج از کشور به صورت آنلاین و تلفنی</p>
+          <p className="text-foreground/80 font-vazir text-lg !leading-relaxed max-w-3xl mx-auto">ارائه خدمات تخصصی روانشناسی به ایرانیان خارج از کشور به صورت آنلاین و تلفنی</p>
         </div>
       </div>
     </div>

@@ -103,7 +103,7 @@ const AnimationSliderItem: FC<PropsType> = ({ activeIndex, setActiveIndex, items
                     <span className="font-vazir text-sm text-card text-center font-bold">علت مراجعه:</span> {item.reason}
                   </span>
 
-                  <p className="text-card text-sm leading-5 text-center my-3 font-medium font-vazir">{item.comment}</p>
+                  <p className="text-card text-sm !leading-5 text-center my-3 font-medium font-vazir">{item.comment}</p>
                   <div className="flex items-center justify-between gap-2 w-full">
                     <span className="self-end text-card opacity-75 font-medium font-vazir text-sm">تاریخ مراجعه</span>
                     <span className="self-end text-card opacity-75 font-medium font-vazir text-sm">{toPersianNumber(item.date)}</span>

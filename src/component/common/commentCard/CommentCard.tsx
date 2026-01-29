@@ -32,7 +32,7 @@ const CommentCard: FC<PropsType> = ({ auther, comment, date, reason, stars }) =>
             <p className="font-vazir text-sm text-card">علت مراجعه:</p>
             <p className="font-vazir text-sm text-card">{reason}</p>
           </div>
-          <p className="text-card text-sm leading-5 text-center my-3 font-medium font-vazir">{comment}</p>
+          <p className="text-card text-sm !leading-5 text-center my-3 font-medium font-vazir">{comment}</p>
           <span className="self-end text-card opacity-75 font-medium font-vazir text-sm">{toPersianNumber(date)}</span>
         </div>
       </div>

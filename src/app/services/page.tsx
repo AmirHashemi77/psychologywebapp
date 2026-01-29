@@ -98,7 +98,7 @@ const ServicesPage: FC = () => {
       <section className="bg-white/70 border border-primary/10 rounded-2xl p-8 shadow-sm">
         <p className="text-secondary font-vazir font-bold text-lg mb-3">خدمات</p>
         <h1 className="text-foreground font-vazir font-bold text-3xl mb-4">دکتر مرضیه خمسه</h1>
-        <p className="text-foreground/80 font-vazir leading-9">
+        <p className="text-foreground/80 font-vazir !leading-9">
           دکتر مرضیه خمسه روان‌درمانگر و روان‌شناس ایرانی با بیش از ۱۷ سال تجربه در جلسات حضوری و آنلاین (برای ایرانیان داخل و خارج از کشور) است. عضو انجمن روان‌شناسی آمریکا (APA) و فعال در تهران برای
           ارائه درمان تحلیلی، طرحواره‌درمانی، زوج‌درمانی و مشاوره فردی و بین‌فردی.
         </p>
@@ -116,7 +116,7 @@ const ServicesPage: FC = () => {
           <h2 className="text-foreground font-vazir font-bold text-2xl mb-4">حوزه‌های تخصصی</h2>
           <ul className="grid sm:grid-cols-2 gap-3">
             {serviceItems.map((service) => (
-              <li key={service} className="rounded-xl border border-primary/10 bg-primary/5 px-4 py-3 text-foreground/90 font-vazir leading-8">
+              <li key={service} className="rounded-xl border border-primary/10 bg-primary/5 px-4 py-3 text-foreground/90 font-vazir !leading-8">
                 {service}
               </li>
             ))}
@@ -125,7 +125,7 @@ const ServicesPage: FC = () => {
 
         <div className="bg-white/70 border border-primary/10 rounded-2xl p-6 shadow-sm">
           <h3 className="text-foreground font-vazir font-bold text-xl mb-3">هماهنگی و نوبت</h3>
-          <p className="text-foreground/80 font-vazir leading-8 mb-3">برای رزرو جلسات حضوری، تلفنی یا آنلاین لطفاً در تلگرام پیام ارسال کنید.</p>
+          <p className="text-foreground/80 font-vazir !leading-8 mb-3">برای رزرو جلسات حضوری، تلفنی یا آنلاین لطفاً در تلگرام پیام ارسال کنید.</p>
           <div className="rounded-xl border border-primary/15 bg-primary/90 px-4 py-4">
             <p className="text-primary-foreground font-vazir text-sm">تلگرام</p>
             <p className="text-primary-foreground font-vazir font-bold text-lg" dir="ltr">
@@ -143,7 +143,7 @@ const ServicesPage: FC = () => {
 
       <section className="mt-10 bg-white/70 border border-primary/10 rounded-2xl p-6 shadow-sm">
         <h2 className="text-foreground font-vazir font-bold text-2xl mb-3">خدمات آنلاین</h2>
-        <p className="text-foreground/80 font-vazir leading-9">
+        <p className="text-foreground/80 font-vazir !leading-9">
           ارائه خدمات تخصصی روان‌شناسی به ایرانیان خارج از کشور و امکان برگزاری جلسات آنلاین یا تلفنی با حفظ کیفیت درمانی. برای هماهنگی، پیام تلگرامی به شماره 00989304390117 ارسال شود.
         </p>
       </section>

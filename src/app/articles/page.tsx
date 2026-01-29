@@ -28,8 +28,8 @@ const normalizeTags = (value?: string | string[]): string[] => {
       values
         .flatMap((item) => item.split(","))
         .map((item) => item.trim())
-        .filter(Boolean),
-    ),
+        .filter(Boolean)
+    )
   );
 };
 
@@ -56,7 +56,7 @@ const coerceArticle = (value: unknown): ArticleSummary | null => {
 };
 
 const normalizeArticlesResponse = (
-  response: unknown,
+  response: unknown
 ): {
   items: ArticleSummary[];
   total?: number;
@@ -228,8 +228,8 @@ const page: FC<PageProps> = async ({ searchParams }) => {
             <FiFilter className="h-5 w-5" />
             <span> مقالات و یادداشت‌های روانشناسی</span>
           </div>
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-vazir font-black text-primary leading-tight">مقالات روانشناسی</h1>
-          <p className="max-w-3xl text-foreground/80 font-vazir leading-8">لیست جدیدترین مقالات روانشناسی | یادگیری مهارت‌های روانی برای زندگی بهتر </p>
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-vazir font-black text-primary !leading-tight">مقالات روانشناسی</h1>
+          <p className="max-w-3xl text-foreground/80 font-vazir !leading-8">لیست جدیدترین مقالات روانشناسی | یادگیری مهارت‌های روانی برای زندگی بهتر </p>
           <div className="flex flex-wrap items-center gap-4 text-sm font-vazir text-foreground/70">
             <span className="rounded-full bg-primary/10 px-4 py-2 font-bold text-primary">مجموع: {toPersianNumber(totalArticles)} مقاله</span>
             {activeTags.length > 0 ? (
@@ -286,12 +286,12 @@ const page: FC<PageProps> = async ({ searchParams }) => {
                         </div>
                         <span className="rounded-full bg-primary/5 px-2 py-1 text-primary">{article.author}</span>
                       </div>
-                      <h3 className="text-lg font-vazir font-extrabold text-primary leading-snug">
-                        <Link className="text-lg font-vazir font-extrabold text-primary leading-snug" href={`/article/${article.id}`}>
+                      <h3 className="text-lg font-vazir font-extrabold text-primary !leading-snug">
+                        <Link className="text-lg font-vazir font-extrabold text-primary !leading-snug" href={`/article/${article.id}`}>
                           {article.title}
                         </Link>
                       </h3>
-                      <p className="text-sm font-vazir text-foreground/80 leading-7">{article.subtitle}</p>
+                      <p className="text-sm font-vazir text-foreground/80 !leading-7">{article.subtitle}</p>
                       <div className="mt-auto flex flex-wrap gap-2 pt-2">
                         {article.tags.map((tag) => (
                           <span key={tag} className="rounded-full border border-primary/10 bg-primary/5 px-2 py-1 text-[11px] font-vazir text-primary">

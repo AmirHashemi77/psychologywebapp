@@ -6,6 +6,7 @@ import { organizationId, organizationSchema, personSchema, websiteSchema, webPag
 import { toAbsoluteUrl } from "@/lib/siteUrl";
 import { getArticleItemServices } from "@/services/article.services";
 import { notFound } from "next/navigation";
+import React from "react";
 
 // نوع داده مقاله - می‌توانید این را در یک فایل types جداگانه قرار دهید
 interface Article {
@@ -21,6 +22,170 @@ interface Article {
   createdAt: string; // ISO Date
   updatedAt: string; // ISO Date
 }
+
+type SlateText = {
+  text: string;
+  bold?: boolean;
+  italic?: boolean;
+  underline?: boolean;
+  code?: boolean;
+};
+
+type SlateElement = {
+  type?: string;
+  align?: "left" | "center" | "right";
+  url?: string;
+  children?: SlateNode[];
+  [key: string]: unknown;
+};
+
+type SlateNode = SlateText | SlateElement;
+
+const isTextNode = (node: unknown): node is SlateText => !!node && typeof node === "object" && "text" in node && typeof (node as { text?: unknown }).text === "string";
+
+const isElementNode = (node: unknown): node is SlateElement => !!node && typeof node === "object" && "children" in node && Array.isArray((node as { children?: unknown }).children);
+
+const sanitizeUrl = (raw: string) => {
+  const url = raw.trim();
+  const lower = url.toLowerCase();
+  if (!url) return "#";
+  if (lower.startsWith("http://") || lower.startsWith("https://")) return url;
+  if (lower.startsWith("data:") || lower.startsWith("blob:")) return url;
+  if (lower.startsWith("mailto:") || lower.startsWith("tel:")) return url;
+  return "#";
+};
+
+const getAlignClass = (align?: SlateElement["align"]) => {
+  if (align === "left") return "text-left";
+  if (align === "center") return "text-center";
+  if (align === "right") return "text-right";
+  return "text-right";
+};
+
+const renderTextNode = (node: SlateText, key: string) => {
+  let content: React.ReactNode = node.text;
+
+  if (node.code) {
+    content = <code className="rounded-md bg-slate-100 px-1.5 py-0.5 font-mono text-[0.95em] text-slate-700 ring-1 ring-inset ring-slate-200">{content}</code>;
+  }
+  if (node.bold) content = <strong>{content}</strong>;
+  if (node.italic) content = <em>{content}</em>;
+  if (node.underline) content = <u>{content}</u>;
+
+  return <React.Fragment key={key}>{content}</React.Fragment>;
+};
+
+const extractCodeText = (nodes: SlateNode[]) =>
+  nodes
+    .map((node) => {
+      if (isTextNode(node)) return node.text;
+      if (isElementNode(node) && node.children) return extractCodeText(node.children);
+      return "";
+    })
+    .join("\n");
+
+const renderNode = (node: SlateNode, key: string): React.ReactNode => {
+  if (isTextNode(node)) return renderTextNode(node, key);
+  if (!isElementNode(node)) return null;
+
+  const alignClass = getAlignClass(node.align);
+  const children = (node.children ?? []).map((child, index) => renderNode(child, `${key}-${index}`));
+
+  switch (node.type) {
+    case "link":
+      return (
+        <a
+          key={key}
+          href={sanitizeUrl(typeof node.url === "string" ? node.url : "")}
+          className="text-primary underline decoration-slate-300 underline-offset-4 hover:text-primary hover:decoration-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white font-bold"
+        >
+          {children}
+        </a>
+      );
+    case "paragraph":
+      return (
+        <p key={key} className={`my-4 text-base md:text-lg leading-9 md:leading-10 text-slate-600 ${alignClass}`}>
+          {children.length > 0 ? children : <br />}
+        </p>
+      );
+    case "heading-two":
+      return (
+        <h2 key={key} className={`mt-16 scroll-mt-24 text-2xl font-bold !leading-tight tracking-tight text-primary sm:text-3xl md:text-4xl ${alignClass}`}>
+          {children}
+        </h2>
+      );
+    case "heading-three":
+      return (
+        <h3 key={key} className={`mt-8 scroll-mt-24 text-xl font-semibold !leading-snug tracking-tight text-primary sm:text-2xl md:text-3xl ${alignClass}`}>
+          {children}
+        </h3>
+      );
+    case "heading-one":
+      return (
+        <h2 key={key} className={`mt-16 scroll-mt-24 text-3xl font-bold !leading-tight tracking-tight text-primary sm:text-4xl md:text-5xl ${alignClass}`}>
+          {children}
+        </h2>
+      );
+    case "block-quote":
+      return (
+        <blockquote key={key} className={`my-6 rounded-xl border-r-4 border-primary bg-slate-50 px-4 py-3 text-base md:text-lg italic leading-9 md:leading-10 text-slate-600 ${alignClass}`}>
+          {children}
+        </blockquote>
+      );
+    case "bulleted-list":
+      return (
+        <ul key={key} className={`my-6 list-disc space-y-3 pr-6 text-base md:text-lg leading-9 md:leading-10 text-slate-600 marker:text-slate-400 ${alignClass}`}>
+          {children}
+        </ul>
+      );
+    case "numbered-list":
+      return (
+        <ol key={key} className={`my-6 list-decimal space-y-3 pr-6 text-base md:text-lg leading-9 md:leading-10 text-slate-600 marker:text-slate-400 ${alignClass}`}>
+          {children}
+        </ol>
+      );
+    case "list-item":
+      return (
+        <li key={key} className="leading-9 md:leading-10">
+          {children}
+        </li>
+      );
+    case "code-block": {
+      const codeText = extractCodeText(node.children ?? []);
+      return (
+        <pre key={key} className="my-6 overflow-x-auto rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 font-mono text-sm md:text-base leading-7 text-slate-600">
+          <code>{codeText}</code>
+        </pre>
+      );
+    }
+    case "image": {
+      const imageNode = node as { url?: string; alt?: string; width?: number; align?: SlateElement["align"] };
+      const url = sanitizeUrl(typeof imageNode.url === "string" ? imageNode.url : "");
+      const alt = typeof imageNode.alt === "string" ? imageNode.alt : "";
+      const width = typeof imageNode.width === "number" ? Math.max(10, Math.min(imageNode.width, 100)) : undefined;
+      const alignClass = imageNode.align === "center" ? "justify-center" : imageNode.align === "left" ? "justify-start" : "justify-end";
+      const widthStyle = width ? { width: `${width}%` } : undefined;
+
+      return (
+        <figure key={key} className={`my-6 flex ${alignClass}`}>
+          <div className="rounded-2xl border border-slate-200 bg-white p-2 shadow-sm" style={widthStyle}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={url} alt={alt} className="h-auto w-full rounded-xl object-cover" />
+            {alt ? <figcaption className="mt-2 text-center text-xs text-slate-500">{alt}</figcaption> : null}
+          </div>
+        </figure>
+      );
+    }
+    default:
+      return (
+        <p key={key} className={`my-4 text-base md:text-lg leading-9 md:leading-10 text-slate-600 ${alignClass}`}>
+          {children}
+        </p>
+      );
+  }
+};
+
+const renderSlateValue = (value: unknown[]) => value.map((node, index) => renderNode(node as SlateNode, `node-${index}`));
 
 const coerceArticle = (value: unknown): Article | null => {
   if (!value || typeof value !== "object") return null;
@@ -45,7 +210,18 @@ const coerceArticle = (value: unknown): Article | null => {
     return [];
   })();
 
-  const valueArray = Array.isArray(record.value) ? (record.value as unknown[]) : [];
+  const valueArray = (() => {
+    if (Array.isArray(record.value)) return record.value as unknown[];
+    if (typeof record.value === "string") {
+      try {
+        const parsed = JSON.parse(record.value);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  })();
 
   const html =
     typeof record.html === "string"
@@ -149,7 +325,7 @@ const ArticleDetails = async ({ params }: ArticlePageProps) => {
         <header className="mb-8">
           <div className="relative mb-8">
             {/* تایتل اصلی */}
-            <h1 className="text-4xl md:text-5xl  font-vazir font-black text-primary mb-6 leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700">{article.title}</h1>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-vazir font-black text-primary mb-6 !leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700">{article.title}</h1>
           </div>
 
           {/* اطلاعات نویسنده و تاریخ با طراحی مدرن */}
@@ -199,7 +375,7 @@ const ArticleDetails = async ({ params }: ArticlePageProps) => {
               </svg>
               خلاصه مقاله
             </h2>
-            <p className="text-foreground leading-relaxed text-lg font-vazir">{article.summary}</p>
+            <p className="text-foreground/80 leading-9 md:leading-10 text-base md:text-lg font-vazir">{article.summary}</p>
           </div>
         </header>
 
@@ -215,13 +391,14 @@ const ArticleDetails = async ({ params }: ArticlePageProps) => {
 
         {/* محتوای اصلی مقاله */}
         <div className="prose prose-lg max-w-none">
-          {article.html ? (
-            <div
-              dangerouslySetInnerHTML={{ __html: article.html }}
-              className="text-foreground font-vazir leading-relaxed space-y-4 whitespace-pre-line text-base md:text-lg font-medium p-5 border-2 border-foreground/50 rounded-2xl"
-            />
+          {article.value.length > 0 ? (
+            <div className="text-foreground/80 font-vazir leading-9 md:leading-10 space-y-5 whitespace-pre-line text-base md:text-lg font-medium p-5 border-2 border-foreground/50 rounded-2xl">
+              {renderSlateValue(article.value)}
+            </div>
           ) : (
-            <div className="text-foreground/70 font-vazir leading-relaxed text-base md:text-lg font-medium p-5 border-2 border-foreground/20 rounded-2xl">محتوایی برای این مقاله ثبت نشده است.</div>
+            <div className="text-foreground/60 font-vazir leading-9 md:leading-10 text-base md:text-lg font-medium p-5 border-2 border-foreground/20 rounded-2xl">
+              محتوایی برای این مقاله ثبت نشده است.
+            </div>
           )}
         </div>
 

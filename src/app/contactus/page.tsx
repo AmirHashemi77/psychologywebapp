@@ -37,7 +37,7 @@ const ContactUsPage: FC = () => {
         <div className="text-center space-y-10 mb-10">
           <p className="text-secondary font-vazir font-bold text-lg">در ارتباط باشیم</p>
           <h1 className="text-foreground font-vazir font-bold text-3xl">تماس با دکتر مرضیه خمسه</h1>
-          <p className="text-foreground/70 font-vazir text-base leading-relaxed">
+          <p className="text-foreground/70 font-vazir text-base !leading-relaxed">
             برای رزرو وقت مشاوره، پرسش درباره خدمات یا هماهنگی جلسات آنلاین و حضوری، از راه‌های زیر با ما تماس بگیرید. پاسخ‌گویی در سریع‌ترین زمان ممکن انجام می‌شود.
           </p>
         </div>
@@ -52,7 +52,7 @@ const ContactUsPage: FC = () => {
             <div key={item.title} className="rounded-xl border border-primary/15 bg-gradient-to-b   from-primary/80  to-primary/85 backdrop-blur px-4 py-5 shadow-sm">
               <p className="text-primary-foreground font-vazir font-semibold text-md mb-1">{item.title}</p>
               <p className="text-primary-foreground font-vazir font-bold text-lg mb-1">{item.value}</p>
-              <p className="text-primary-foreground/70 font-vazir text-sm leading-7">{item.note}</p>
+              <p className="text-primary-foreground/70 font-vazir text-sm !leading-7">{item.note}</p>
             </div>
           ))}
         </div>
@@ -133,7 +133,7 @@ const ContactUsPage: FC = () => {
 
             <div className="rounded-2xl border border-primary/15 bg-white/70 p-6 shadow-sm flex-1 h-full">
               <h3 className="text-foreground font-vazir font-bold text-xl mb-3">راهنمای حضور در مطب</h3>
-              <p className="text-foreground/80 font-vazir leading-10 mb-3">
+              <p className="text-foreground/80 font-vazir !leading-10 mb-3">
                 پس از رزرو، موقعیت دقیق مطب و زمان دقیق نوبت از طریق تلگرام برای شما ارسال می‌شود. لطفاً ۱۰ دقیقه زودتر در محل حضور داشته باشید.
               </p>
               <div className="rounded-lg border border-primary/10 bg-white/70 px-4 py-3 text-foreground/70 font-vazir text-sm">
