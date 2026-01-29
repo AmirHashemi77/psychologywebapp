@@ -48,7 +48,7 @@ const coerceArticle = (value: unknown): ArticleSummary | null => {
   const title = typeof record.title === "string" ? record.title : "";
   const subtitle = typeof record.subtitle === "string" ? record.subtitle : typeof record.summary === "string" ? record.summary : "";
   const author = typeof record.author === "string" ? record.author : "";
-  const createdAt = typeof record.publishDate === "string" ? record.publishDate : typeof record.publishedAt === "string" ? record.publishedAt : "";
+  const createdAt = typeof record.createdAt === "string" ? record.createdAt : typeof record.createdAt === "string" ? record.createdAt : "";
   const tags = Array.isArray(record.tags) ? (record.tags.filter((t) => typeof t === "string") as string[]) : [];
   const imageUrl = typeof record.imageUrl === "string" ? record.imageUrl : typeof record.image === "string" ? record.image : "/images/article-sample.png";
 
@@ -282,7 +282,7 @@ const page: FC<PageProps> = async ({ searchParams }) => {
                       <div className="flex items-center justify-between text-xs font-vazir text-foreground/70">
                         <div className="flex items-center gap-1">
                           <FiCalendar className="h-4 w-4" />
-                          <span>{toPersianNumber(article.createdAt)}</span>
+                          <span>{toPersianNumber(new Date(article.createdAt).toLocaleDateString("fa", { dateStyle: "long" }))}</span>
                         </div>
                         <span className="rounded-full bg-primary/5 px-2 py-1 text-primary">{article.author}</span>
                       </div>
